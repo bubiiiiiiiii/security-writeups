@@ -11,3 +11,13 @@ Goal: read a file named "-"
 Commands: cat ./-
 Mistake: ran "cat ./" which means "the current folder", not the file
 Lesson: a lone - means "read from keyboard", so ./ makes it a real file path
+
+## Level 2
+Goal: read a file with spaces in the name (and dashes at the start)
+Commands: cat ./"--spaces in this filename--"
+Lesson: spaces split a command into pieces; quotes keep them together
+
+## Level 3
+Goal: find a hidden file
+Commands: ls -la
+Lesson: hidden files start with a dot and don't show up with plain ls  
