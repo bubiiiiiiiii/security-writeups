@@ -33,3 +33,30 @@ Goal: find a file by size and properties (1033 bytes, not executable) across 20 
 Commands: find . -type f -size 1033c ! -executable
 Mistake: ran find after cd-ing into one folder, so it only searched that folder
 Lesson: find searches from where you run it; the c in -size means bytes
+
+## Level 6
+Goal: find a file by owner, group and size anywhere on the server
+Commands: find / -user bandit7 -group bandit6 -size 33c 2>/dev/null
+Mistake: used made-up user and group names instead of the real ones from the page
+Lesson: start from / to search everything, and 2>/dev/null hides the errors
+
+## Level 7
+Goal: find the password next to a specific word in a large file
+Commands: grep word data.txt
+Lesson: grep filters lines instead of reading everything by eye
+
+## Level 8
+Goal: find the one line that appears only once
+Commands: sort data.txt | uniq -u
+Lesson: uniq only compares neighbouring lines, so sort first; pipes chain commands
+
+## Level 9
+Goal: find the readable string in a mostly-binary file
+Commands: strings data.txt | grep "=="
+Lesson: strings extracts readable text, then grep narrows it down
+
+## Level 10
+Goal: decode a base64-encoded file
+Commands: base64 -d data.txt
+Mistake: typed -d on its own, so the terminal said "command not found"
+Lesson: options go after a command name; base64 is encoding, not encryption, with no key
