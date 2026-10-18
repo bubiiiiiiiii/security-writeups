@@ -60,3 +60,19 @@ Goal: decode a base64-encoded file
 Commands: base64 -d data.txt
 Mistake: typed -d on its own, so the terminal said "command not found"
 Lesson: options go after a command name; base64 is encoding, not encryption, with no key
+
+## Bandit Level 11 → 12
+
+**Goal:** The password is in `data.txt`, where all lowercase (a-z) and uppercase (A-Z) letters have been rotated by 13 positions (ROT13).
+
+**Command:**
+```bash
+cat data.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+```
+
+**Explanation:**
+- `cat` prints the file contents
+- `tr` translates characters from one set to another
+- `'A-Za-z'` → `'N-ZA-Mn-za-m'` shifts every letter 13 places, which decodes ROT13
+
+**What I learned:** ROT13 is a simple substitution cipher and is its own inverse, so applying it twice gives back the original text. It's trivial to break and gives no real security.
