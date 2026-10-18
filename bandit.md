@@ -76,3 +76,40 @@ cat data.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m'
 - `'A-Za-z'` → `'N-ZA-Mn-za-m'` shifts every letter 13 places, which decodes ROT13
 
 **What I learned:** ROT13 is a simple substitution cipher and is its own inverse, so applying it twice gives back the original text. It's trivial to break and gives no real security.
+
+
+## Bandit Level 12 → 13
+
+**Goal:** `data.txt` is a hexdump of a file that was compressed repeatedly. Reverse it and extract the password.
+
+**Setup (home directory is read-only, so work in a temp folder):**
+```bash
+mktemp -d
+cp data.txt /tmp/<tempdir>
+cd /tmp/<tempdir>
+xxd -r data.txt > data
+file data
+```
+
+**Decompression chain (checked with `file` after every step):**
+
+| Step | `file` said | Command |
+|------|-------------|---------|
+| 1 | gzip | `mv data data.gz && gzip -d data.gz` |
+| 2 | bzip2 | `mv data data.bz2 && bzip2 -d data.bz2` |
+| 3 | gzip | `mv data data.gz && gzip -d data.gz` |
+| 4 | tar | `mv data data.tar && tar xf data.tar` → `data5.bin` |
+| 5 | tar | `tar xf data5.bin` → `data6.bin` |
+| 6 | bzip2 | `mv data6.bin data6.bz2 && bzip2 -d data6.bz2` |
+| 7 | tar | `tar xf data6` → `data8.bin` |
+| 8 | gzip | `mv data8.bin data8.gz && gzip -d data8.gz` |
+
+Finally `file data8` reported ASCII text, and `cat data8` gave the password.
+
+**Explanation:**
+- `xxd -r` reverses a hexdump back into binary
+- `file` identifies the real format, since the filename can't be trusted
+- `gzip -d` / `bzip2 -d` need the matching extension, so rename with `mv` first
+- `tar xf` extracts an archive and the inner file gets a new name, so check with `ls` each time
+
+**What I learned:** Never guess the file type, run `file` at every layer. Also, you need a writable directory like `/tmp` for work files.
